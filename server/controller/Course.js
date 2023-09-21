@@ -4,8 +4,6 @@ const Category = require("../model/Category");
 const { uploadImageToCloudinary } = require("../uitil/imageUploader");
 const Section = require("../model/Section");
 const SubSection = require("../model/SubSection");
-const { default: mongoose } = require("mongoose");
-const { useId } = require("react");
 
 exports.createCourse = async (req, res) => {
     try {
