@@ -3,7 +3,7 @@ const otpTemplate = require("../mail/templet/emailVarifactionTemplet");
 require('dotenv').config()
 
 const emailSender = async(email,title,body) =>{
-    console.log("i am inside the email sender",)
+    console.log("i am inside the email sender",process.env.MAIL_HOST)
     try{
      let transport = nodemailer.createTransport({
         host:process.env.MAIL_HOST,
