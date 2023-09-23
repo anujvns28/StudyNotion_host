@@ -136,7 +136,7 @@ const CourseDetails = () => {
          
          {token ? courseDetails.data.enrolledStudents.includes(user._id) ? "Go to Course" : "Buy Now" : "Buy Now"}
           </button>
-         {console.log(user.accountType,",,,,")}
+         
          {
           
            token ?  !courseDetails.data.enrolledStudents.includes(user._id) && 
