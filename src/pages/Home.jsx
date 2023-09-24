@@ -17,7 +17,6 @@ import { setCourse } from '../slices/courseSlice'
 const Home = () => {
   const dispatch = useDispatch();
   const {course} = useSelector((state) => state.course);
-  console.log("urlllllllllllllllll",process.env.REACT_APP_BASE_URL)
   return (
     <div className=''>
       {/* section 1 */}
@@ -145,7 +144,7 @@ const Home = () => {
 
 {/* Unlock the power of code */}
     
-    <ExploreMore/>
+    {/* <ExploreMore/> */}
       
       </div>
       {/* section 2 */}
