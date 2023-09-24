@@ -144,7 +144,7 @@ const Home = () => {
 
 {/* Unlock the power of code */}
     
-    {/* <ExploreMore/> */}
+    <ExploreMore/>
       
       </div>
       {/* section 2 */}
