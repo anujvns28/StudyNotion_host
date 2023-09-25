@@ -4,10 +4,13 @@ require("dotenv").config();
 // auth
 exports.auth = async (req, res, next) => {
     try {
+        console.log("commitn in mid")
         //  fetch token
         const token = req.cookies.token
             || req.body.token
-            || req.header("Authorization").replace("Bearer ", "");
+            || req.header("Authorization").replace("Bearer", "");
+
+            console.log(token,"this is token in middler werare")
 
         // token vallidation
         if (!token) {
@@ -34,7 +37,7 @@ exports.auth = async (req, res, next) => {
         console.log(error);
         return res.status(500).json({
             success: false,
-            message: 'Something went wrong while validating the token',
+            message: 'Something went wrong while validating the token',error,
         });
     }
 }
