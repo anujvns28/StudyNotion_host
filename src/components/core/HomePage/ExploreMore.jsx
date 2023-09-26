@@ -14,8 +14,7 @@ const tabsName = [
 const ExploreMore = () => {
 
     const [currenTab,setCurrenTab] = useState(tabsName[0]);
-    const [box,setBox] = useState()
-    console.log(box)
+    
 
     const setMyCard = (value) =>{
         setCurrenTab(value)

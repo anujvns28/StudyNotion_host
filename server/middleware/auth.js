@@ -8,10 +8,9 @@ exports.auth = async (req, res, next) => {
         //  fetch token
         const token = req.cookies.token
             || req.body.token
-            || req.header("Authorization").replace("Bearer", "");
+            || req.header("Authorization").replace("Bearer ", "");
 
-            console.log(token,"this is token in middler werare")
-
+         console.log(token)
         // token vallidation
         if (!token) {
             return res.status(500).json({
@@ -19,18 +18,21 @@ exports.auth = async (req, res, next) => {
                 message: 'token is missing',
             });
         }
+    
         // decode token and add in req.body
-
+            
         try {
-            const decode = jwt.decode(token, process.env.JWT_SERCET);
-          
+            const decode = jwt.verify(token,process.env.JWT_SERCET);
+            console.log(decode)
             req.user = decode;
         }catch(err){
+            console.log(err.message)
             return res.status(500).json({
                 success: false,
                 message: 'token is invallied',
             });
         }
+       
         next();
 
     } catch (error) {
@@ -47,6 +49,7 @@ exports.auth = async (req, res, next) => {
 
 exports.isStudent = async (req,res,next)=>{
 try{
+    console.log("commin in isSturdent",req.user)
 if(req.user.accountType !== "Student"){
     return res.status(401).json({
         success:false,
@@ -59,7 +62,8 @@ next();
 }catch(error){
     return res.status(500).json({
         success:false,
-        message:'User role cannot be verified, please try again'
+        message:'User role cannot be verified, please try again',
+        data:req.user
     })
 }
 }

@@ -10,6 +10,7 @@
     "caniuse-lite": "^1.0.30001525",
     "clipboard-copy": "^4.0.1",
     "concurrently": "^8.2.0",
+    "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

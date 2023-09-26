@@ -82,7 +82,9 @@ exports.showAllCategoriesDetails = async (req, res) => {
         console.log("cominnin.............")
         const categoryId  = req.body._id;
 
-        console.log("coteryid",categoryId)
+        
+
+       
         //fetch data
         const selectedCategori = await Category.findById({_id:categoryId})
         .populate({
@@ -102,7 +104,7 @@ exports.showAllCategoriesDetails = async (req, res) => {
                 message: "can not find any course for this category"
             })
         }
-         console.log( 'idar tak shai hai kya')
+        
         //getother course
         const outherCategoris = await Category.find(
             {
@@ -122,7 +124,7 @@ exports.showAllCategoriesDetails = async (req, res) => {
             .exec();
         //top 10 sellling course
         
-        console.log(differentCategory)
+      
         
         //return response
         return res.status(200).json({

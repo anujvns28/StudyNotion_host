@@ -23,7 +23,7 @@ exports.sendOtp = async (req, res) => {
                 message: "User alerady exist"
             })
         }
-        console.log("printing",email)
+        console.log("printing", email)
         // generate otp
         var otp = otpGenrator.generate(6, {
             upperCaseAlphabets: false,
@@ -48,7 +48,7 @@ exports.sendOtp = async (req, res) => {
 
         const otpBody = await OTP.create(otpPayload);
 
-          emailSender(email,"Verification Email",otpTemplate(otp))
+        emailSender(email, "Verification Email", otpTemplate(otp))
 
         // return response
         res.status(200).json({
@@ -85,7 +85,7 @@ exports.signup = async (req, res) => {
             otp
         } = req.body;
 
-     
+
         // vallidation 
         if (!email.includes("@gmail.com")) {
             return res.status(500).json({
@@ -107,25 +107,25 @@ exports.signup = async (req, res) => {
             })
         }
         // find most resent otp
-       
-        const resentOtp  = await OTP.findOne({email:email}).sort({createdAt:-1}).limit(1);
-        console.log("otp,,,,,,,,,,,",resentOtp.otp);
+
+        const resentOtp = await OTP.findOne({ email: email }).sort({ createdAt: -1 }).limit(1);
+        console.log("otp,,,,,,,,,,,", resentOtp.otp);
 
         //otp vallidation
-        if(resentOtp.length === 0){
+        if (resentOtp.length === 0) {
             return res.status(500).json({
                 success: false,
                 message: "otp not find",
             })
-        } 
-        else if(otp !== resentOtp.otp){
+        }
+        else if (otp !== resentOtp.otp) {
             return res.status(500).json({
                 success: false,
                 message: "invallied otp",
             })
         }
-        
-        
+
+
         // check user already exist
         const user = await User.findOne({ email });
         if (user) {
@@ -137,20 +137,20 @@ exports.signup = async (req, res) => {
         // hasssing password
         const haspass = await bcrypt.hash(password, 10);
         // entry created in db
-        
+
         const profileDetail = await Profile.create({
             gender: null,
             dateOfBirth: null,
             about: null,
             contactNumber: null,
         })
-         console.log(profileDetail)
+        console.log(profileDetail)
         const response = await User.create({
             firstName,
             lastName,
             email,
             password: haspass,
-            accountType:accountType,
+            accountType: accountType,
             additinaolDetail: profileDetail,
             image: `https://api.dicebear.com/5.x/initials/svg?seed=${firstName}%20${lastName}`
         })
@@ -174,139 +174,142 @@ exports.signup = async (req, res) => {
 
 // login
 
-exports.login = async(req,res) =>{
-// fetch data
-try{
-    const {email,password} = req.body;
+exports.login = async (req, res) => {
+    // fetch data
+    try {
+        const { email, password } = req.body;
 
-    // vallidation
-    if(!email.includes("@gmail.com")){
+        // vallidation
+        if (!email.includes("@gmail.com")) {
+            return res.status(500).json({
+                success: false,
+                message: "Invallied email",
+            })
+        } else if (!email || !password) {
+            return res.status(500).json({
+                success: false,
+                message: "All filled required",
+            })
+        }
+        // check user alreday exisst or not
+        const user = await User.findOne({ email }).populate("additinaolDetail").exec()
+
+
+
+        if (!user) {
+            return res.status(500).json({
+                success: false,
+                message: "User is not Rejustered",
+            })
+        }
+        // jenrate jwt after match password
+        console.log(user)
+        console.log("printing")
+        const payload = {
+            email: user.email,
+            id: user._id,
+            accountType: user.accountType,
+            additinaolDetail: user.additinaolDetail._id
+        }
+        
+      
+        if (await bcrypt.compare(password, user.password)) {
+            const token = jwt.sign(payload, process.env.JWT_SERCET, {
+                expiresIn: "2h"
+            })
+            user.token = token;
+            user.password = undefined;
+            console.log('this is jwt',process.env.JWT_SERCET)
+            // send cookie in res
+            console.log(token,"login token")
+            const options = {
+                expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
+                httpOnly: true,
+            }
+            res.cookie("token", token, options).status(200).json({
+                success: true,
+                token,
+                user,
+                messege: "Loged in successfully"
+
+            })
+        }
+        else {
+            return res.status(500).json({
+                success: false,
+                message: "passowrd is not matched",
+            })
+        }
+    } catch (err) {
+        console.log(err);
         return res.status(500).json({
             success: false,
-            message: "Invallied email",
-        })
-    }else if(!email || !password){
-        return res.status(500).json({
-            success: false,
-            message: "All filled required",
-        })
+            message: 'Login Failure, please try again',
+        });
     }
-    // check user alreday exisst or not
-    const user = await User.findOne({email}).populate("additinaolDetail").exec()
-    
-    if(!user){
-        return res.status(500).json({
-            success: false,
-            message: "User is not Rejustered",
-        })
-    }
-    // jenrate jwt after match password
-    console.log(user)
-    console.log("printing")
-    const payload = {
-        email:user.email,
-         id : user._id,
-         accountType:user.accountType,
-         additinaolDetail:user.additinaolDetail._id
-    }
-    console.log("printing")
-   console.log(payload)
-    if(await bcrypt.compare(password,user.password)){
-        const token =  jwt.sign(payload,process.env.JWT_SERCET,{
-            expiresIn:"2h"
-        })
-        user.token = token;
-        user.password  = undefined;
-    
-    // send cookie in res
-    const options = {
-        expires: new Date(Date.now() + 3*24*60*60*1000),
-        httpOnly:true,
-    }
-       res.cookie("token",token,options).status(200).json({
-        success:true,
-        token,
-        user,
-        messege:"Loged in successfully"
-    
-       })
-    }
-    else{
-        return res.status(500).json({
-            success: false,
-            message: "passowrd is not matched",
-        })
-    }
-}catch(err){
-    console.log(err);
-    return res.status(500).json({
-        success:false,
-        message:'Login Failure, please try again',
-    });
-}
 }
 
 // _______________________------------------------____________________________
 
 // chenge passowrd
 
-exports.chengePassword = async(req,res) =>{
-    try{
+exports.chengePassword = async (req, res) => {
+    try {
 
-// fetchig daata
-const {email,oldPassword,newPassword} =  req.body;
+        // fetchig daata
+        const { email, oldPassword, newPassword } = req.body;
 
 
-// vallidition
-if(!oldPassword || !newPassword ){
-    
+        // vallidition
+        if (!oldPassword || !newPassword) {
+
+            return res.status(500).json({
+                success: false,
+                message: 'all filled are required'
+            });
+
+        }
+        // password matched with db passowrd
+        // updatd password in db
+        const user = await User.findOne({ email: email });
+
+        console.log("user.......", user)
+        const haspassword = await bcrypt.hash(newPassword, 10)
+        console.log(haspassword)
+
+        if (await bcrypt.compare(oldPassword, user.password)) {
+
+            await User.findByIdAndUpdate(
+                { _id: user._id },
+                { password: haspassword },
+                { new: true }
+            )
+
+
+        } else {
+            return res.status(500).json({
+                success: false,
+                message: "old Password is not matching"
+            })
+        }
+
+        // send upted password email
+        emailSender(email, "StudyNotion - Anuj Yadav", "Your password  uptead successfully")
+
+        // send response  
+        return res.status(200).json({
+            success: true,
+            message: "Password uptedad successfully",
+            user
+        })
+    }
+
+    catch (err) {
+        console.log(err);
         return res.status(500).json({
-            success:false,
-            message:'all filled are required'
+            success: false,
+            message: 'err in ching password',
         });
-    
     }
-// password matched with db passowrd
-// updatd password in db
-const user = await User.findOne({email:email});
-
-console.log("user.......",user)
-const haspassword = await bcrypt.hash(newPassword,10)
-console.log(haspassword)
-
-if(await bcrypt.compare(oldPassword,user.password)){
-   
- await User.findByIdAndUpdate(
-                {_id:user._id},
-                {password:haspassword},
-                {new:true}
-                )
-
-                
-} else{
-    return res.status(500).json({
-        success:false,
-        message:"old Password is not matching"
-    })
 }
-
-// send upted password email
-emailSender(email,"StudyNotion - Anuj Yadav","Your password  uptead successfully")
-
-// send response  
-return res.status(200).json({
-    success: true,
-    message: "Password uptedad successfully",
-    user
-})
-}
-  
-catch(err){
-    console.log(err);
-    return res.status(500).json({
-        success:false,
-        message:'err in ching password',
-    });
-}
-    }
 
