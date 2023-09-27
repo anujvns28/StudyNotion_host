@@ -215,7 +215,7 @@ exports.login = async (req, res) => {
       
         if (await bcrypt.compare(password, user.password)) {
             const token = jwt.sign(payload, process.env.JWT_SERCET, {
-                expiresIn: "2h"
+                expiresIn: "24h"
             })
             user.token = token;
             user.password = undefined;
