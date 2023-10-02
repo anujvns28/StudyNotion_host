@@ -70,7 +70,7 @@ const NavBar = () => {
                             subLinks.map((subLink, index) => {
                               return <div className=''>
                                {
-                                subLink.length === 0 ? "Loading..."
+                                !subLink.length  ? "Loading..."
                                 : <Link to={`/catalog/${subLink.link}`} key={index}>
                                 <p className='hover:bg-richblack-50 py-4  px-4 rounded-md'
                                 >{subLink.name}</p>
