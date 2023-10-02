@@ -346,8 +346,11 @@ exports.deleteCourse = async (req, res) => {
 
   exports.delteCourseByStudent = async(req,res) =>{
      try{
+        console.log("comming in student delte")
     const userId = req.user.id
     const {courseId} = req.body;
+    
+    console.log(userId,courseId)
     const course_Id = new mongoose.Types.ObjectId(courseId);
     const user_id = new mongoose.Types.ObjectId(userId);
     console.log(userId)
@@ -371,6 +374,7 @@ exports.deleteCourse = async (req, res) => {
         message:"successfull "
     })
      }catch(err){
+        console.log("err occerf in dleteting")
         return res.status(500).json({
             success:false,
             message:err
