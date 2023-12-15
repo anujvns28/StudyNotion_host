@@ -5,6 +5,7 @@ import rzpLogo from "../../assets/Logo/Logo-Full-Dark.png"
 
 
 
+
 const {COURSE_PAYMENT_API, COURSE_VERIFY_API, SEND_PAYMENT_SUCCESS_EMAIL_API} = paymentEndpoints;
 
 function loadScript(src) {
@@ -24,7 +25,11 @@ function loadScript(src) {
 
 
 export async function buyCourse(token, courses, userDetails, navigate, dispatch) {
+
+    console.log(process.env,"this is printing razorpy id")
+
     const toastId = toast.loading("Loading...");
+    console.log(COURSE_PAYMENT_API,"this is payment apie")
     try{
         //load the script
         const res = await loadScript("https://checkout.razorpay.com/v1/checkout.js");
@@ -65,6 +70,7 @@ export async function buyCourse(token, courses, userDetails, navigate, dispatch)
                  verifyPayment({...response, courses}, token, navigate, dispatch);
             }
         }
+        console.log(options,"this is opetionsss")
         //miss hogya tha 
         const paymentObject = new window.Razorpay(options);
         paymentObject.open();

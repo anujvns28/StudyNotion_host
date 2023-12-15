@@ -11,6 +11,9 @@ const otpTemplate = require("../mail/templet/emailVarifactionTemplet");
 
 //initiate the razorpay order
 exports.capturePayment = async(req, res) => {
+    
+
+   
 
     const {courses} = req.body;
     const userId = req.user.id;
@@ -66,13 +69,13 @@ exports.capturePayment = async(req, res) => {
 
 //verify the payment
 exports.verifyPayment = async(req, res) => {
+
+    console.log("paymmint in veryfie")
     const razorpay_order_id = req.body?.razorpay_payment_id;
     const razorpay_payment_id = req.body?.razorpay_payment_id;
     const razorpay_signature = req.body?.razorpay_signature;
     const courses = req.body?.courses;
     const userId = req.user.id;
-
-    console.log("xxxx",req.body)
 
     if(!razorpay_order_id ||
         !razorpay_payment_id ||
@@ -86,7 +89,6 @@ exports.verifyPayment = async(req, res) => {
         .update(body.toString())
         .digest("hex");
 
-        console.log("idartak okk hai bhaiya ji")
 
         console.log("truelove",expectedSignature === razorpay_signature,expectedSignature , razorpay_signature)
 

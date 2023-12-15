@@ -6,6 +6,7 @@ import { RiDeleteBin6Line } from "react-icons/ri"
 import RatingStars from '../../components/common/RatingStar'
 import { removeFromCart } from '../../slices/cartSlice'
 
+
 const RenderCartCourses = () => {
     const {cart} = useSelector((state) => state.cart)
     const dispatch = useDispatch()
@@ -44,7 +45,7 @@ const RenderCartCourses = () => {
         <div className="flex flex-col items-end space-y-2">
           {console.log("carttttttttt",course._id)}
           <button
-             onClick={() => dispatch(removeFromCart(course._id))}
+             onClick={() => dispatch(removeFromCart)}
             className="flex items-center gap-x-1 rounded-md border border-richblack-600 bg-richblack-700 py-3 px-[12px] text-pink-200"
           >
             <RiDeleteBin6Line />

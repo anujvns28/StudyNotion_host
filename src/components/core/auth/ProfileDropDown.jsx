@@ -8,11 +8,11 @@ import { lougOut } from '../../../service/operations/authApi'
 
 const ProfileDropDown = () => {
 
-   const selector = useSelector
+   
    const navigate = useNavigate()
    const dispatch = useDispatch()
     
-    const {user} = selector((state) => state.profile)
+    const {user} = useSelector((state) => state.profile)
     const [open,setOpen] = useState(false)
     const openRef = useRef(false)
     const dasRef = useRef(false)
